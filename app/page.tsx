@@ -1,4 +1,6 @@
-import { getSupabase, type Card, type FamilyMember } from '@/lib/supabase';
+import { redirect } from 'next/navigation';
+import type { Card, FamilyMember } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,7 +62,12 @@ function CardItem({ card }: { card: Card }) {
 }
 
 export default async function Dashboard() {
-  const supabase = getSupabase();
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
+
   const [membersRes, cardsRes] = await Promise.all([
     supabase.from('homeroom_family_members').select('*').eq('relation', 'kid'),
     supabase.from('homeroom_cards').select('*').is('read_at', null),

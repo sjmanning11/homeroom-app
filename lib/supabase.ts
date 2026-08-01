@@ -1,5 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
 export type Category =
   | 'announcement'
   | 'grade'
@@ -28,11 +26,4 @@ export interface Card {
   priority: Priority;
   created_at: string;
   read_at: string | null;
-}
-
-export function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!
-  );
 }
