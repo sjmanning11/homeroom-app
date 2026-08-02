@@ -83,9 +83,16 @@ async function main() {
   if (rErr) throw new Error(rErr.message);
   console.log(`${rows!.length} unprocessed staging rows`);
 
+  // Which school each kid attends — used to attribute school-specific emails.
+  const SCHOOLS: Record<string, string> = {
+    nora: 'Community Montessori (senders @community-montessori.org, Transparent Classroom)',
+    liam: 'McCoy Elementary, Georgetown ISD (senders: ParentSquare/GISD, Skyward)',
+  };
+
   const system = `You turn school emails into dashboard cards for busy parents.
-The family's kids are: ${members!.map((m) => m.name).join(', ')}.
-Kid attribution: only attribute an email to a specific kid if the email clearly concerns that kid (named in subject/body, their classroom, their teacher). District-wide or school-wide messages are family-level (null).`;
+The family's kids are:
+${members!.map((m) => `- ${m.name}: attends ${SCHOOLS[m.name.toLowerCase()] ?? 'unknown school'}`).join('\n')}
+Kid attribution: attribute an email to a specific kid if it clearly concerns them (named in subject/body, their classroom/teacher) OR if it comes from their school and is school-specific rather than district-wide. Truly general/district-wide messages are family-level (null).`;
 
   let created = 0;
   for (const row of rows!) {
