@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import type { Card, FamilyMember } from '@/lib/supabase';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import DashboardClient from './dashboard-client';
+import { PushPrompt } from './push-prompt';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +38,7 @@ export default async function Dashboard() {
         <h1 className="text-2xl font-bold">Homeroom</h1>
         <p className="text-sm text-gray-500">Family school dashboard</p>
       </header>
+      <PushPrompt />
       <DashboardClient
         members={membersRes.data as FamilyMember[]}
         initialCards={cardsRes.data as Card[]}

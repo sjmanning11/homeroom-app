@@ -2,6 +2,25 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
+export async function savePushSubscription(sub: {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+}) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { error } = await supabase
+    .from('homeroom_push_subscriptions')
+    .upsert(
+      { endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth },
+      { onConflict: 'endpoint' }
+    );
+  if (error) throw new Error(error.message);
+}
+
 export async function setCardRead(cardId: string, read: boolean) {
   const supabase = await createSupabaseServerClient();
   const {

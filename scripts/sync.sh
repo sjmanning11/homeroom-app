@@ -9,3 +9,4 @@ cd "$HOME/homeroom"
 echo "=== sync $(date -Is) ==="
 npx tsx scripts/gmail-fetch.ts --days 3
 npx tsx scripts/normalize-staging.ts
+npx tsx scripts/send-push.ts
