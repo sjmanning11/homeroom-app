@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Gmail ingest sync: fetch new school emails, normalize into cards, push.
-# Run by cron every 2h. Logs to ~/homeroom/sync.log.
+# Direct scrapers: Skyward (attendance/test scores) + Transparent Classroom
+# (classroom posts). Run by cron daily — these are low-frequency sources.
+# Logs to ~/homeroom/scrape.log.
 # On step failure, writes a high-priority alert card to the dashboard.
 set -uo pipefail
 
@@ -21,8 +22,9 @@ run_step() {
   fi
 }
 
-echo "=== sync $(date -Is) ==="
-run_step gmail npx tsx scripts/gmail-fetch.ts --days 3
-run_step gmail npx tsx scripts/normalize-staging.ts
+echo "=== scrape $(date -Is) ==="
+run_step skyward npx tsx scripts/skyward-fetch.ts
+run_step transparent_classroom npx tsx scripts/tc-fetch.ts
+# Push any high-priority cards produced (attendance alerts, sync-failure alerts).
 npx tsx scripts/send-push.ts || echo "send-push failed (non-fatal)"
 exit $FAIL
