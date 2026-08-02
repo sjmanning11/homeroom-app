@@ -46,3 +46,4 @@ yarn-error.log*
 next-env.d.ts
 /sync.log
 .skyward-state.json
+.tc-state.json
