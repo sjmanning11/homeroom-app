@@ -25,6 +25,13 @@ export function PushPrompt() {
     }
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        // Re-sync on every load: restores DB rows pruned after endpoint
+        // rotation, so the server always has this device's current endpoint.
+        savePushSubscription(
+          sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } }
+        ).catch(() => {});
+      }
       setState(sub ? 'subscribed' : 'prompt');
     });
   }, []);
